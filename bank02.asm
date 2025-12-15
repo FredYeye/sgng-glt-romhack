@@ -6683,12 +6683,12 @@ _02FF22: ;a8 x-
     jsr _02FF57
     bcs .ret
 
-    dec.w !obj_shield.hp
-    bpl +
+;    dec.w !obj_shield.hp
+;    bpl +
 
-    lda #$8C : sta.w !obj_shield.active
-    lda.w !obj_shield.flags1 : ora #$80 : sta.w !obj_shield.flags1
-+:
+;    lda #$8C : sta.w !obj_shield.active
+;    lda.w !obj_shield.flags1 : ora #$80 : sta.w !obj_shield.flags1
+;+:
     lda #$8C : sta.b obj.active
     lda $08  : ora #$80 : sta $08
     asl $09  : lsr $09

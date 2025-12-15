@@ -110,17 +110,17 @@ destroy:
 
     lda $08 : and #$F7 : sta $08
     lda #$FF : sta $07
-    lda.w !obj_shield.active
-    beq .B796
+;   lda.w !obj_shield.active
+;   beq .B796
 
-    lda.w !obj_shield.init_param
-    clc
-    adc #$05
-    bra .B799
+;   lda.w !obj_shield.init_param
+;   clc
+;   adc #$05
+;   bra .B799
 
-.B796:
+;.B796:
     lda.w armor_state
-.B799:
+;.B799:
     asl #4
     clc
     adc $37 ;chest number of this chest

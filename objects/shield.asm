@@ -22,7 +22,9 @@ create:
     lda.w shield_data_hp,X : sta.b obj.hp
     lda #$FF : sta $2D : sta $26
 .905D:
-    lda.w armor_state
+    ;lda.w armor_state
+    lda.w !obj_arthur.hp
+    cmp #$FF
     beq _9025
 
     lda.w !obj_arthur._25 : tay

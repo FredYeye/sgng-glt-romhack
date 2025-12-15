@@ -1,0 +1,17 @@
+changes:
+
+bank01.asm
+    .ACC4:
+        always create a shield when starting a stage
+
+bank02.asm
+    _02FF22
+        comment out the code responsible for decreasing shield health and destroying it
+
+shield.asm
+    .905D
+        destroy shield when arthur dies instead of when getting hit
+
+chest.asm
+    .B775
+        ignore shield for checking chest order

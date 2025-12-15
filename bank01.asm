@@ -5755,13 +5755,14 @@ endif
     lda #$01 : sta.w can_charge_magic
     stz $14B3
 +:
-    lda.w shield_state_stored
-    beq .AD21
+;    lda.w shield_state_stored
+;    beq .AD21
+    lda #!id_shield
 
     sta.w !obj_shield.type
     lda.w shield_type_stored : sta.w !obj_shield.init_param
     lda #$0C                 : sta.w !obj_shield.active
-.AD21:
+;.AD21:
     lda.w upgrade_state_stored
     beq +
 
