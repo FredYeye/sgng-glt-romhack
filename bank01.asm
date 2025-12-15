@@ -1,4 +1,4 @@
-org $018000
+org $818000
 
 { ;8000 - 8020
 set_hp: ;a- x-
@@ -15293,18 +15293,8 @@ _01F722: ;a8 x8
     rts
 }
 
-if !version == 0
-{ ;F783 - FEFF
-    incbin "fill_bytes/jp/bank01a.bin" ;unused duplicate code
-    fillbyte $FF : fill 1398
-}
-elseif !version == 1
-    incbin "fill_bytes/eng/bank01a.bin"
-elseif !version == 2
-    incbin "fill_bytes/eng/bank01a.bin":121..0
-endif
-
 { ;FF00 - FF73
+org $81FF80
 _01FF00: ;a- x-
     .00: jml _01A87C
     .04: jml _019A93
@@ -15347,14 +15337,4 @@ endif
 { ;FF74 - FF76
 _01FF74:
     jmp _01FF74 ;infinite loop
-}
-
-{ ;FF77 - FFFF
-if !version == 0
-    fillbyte $FF : fill 137
-elseif !version == 1
-    incbin "fill_bytes/eng/bank01b.bin"
-elseif !version == 2
-    incbin "fill_bytes/eng/bank01b.bin":4..0
-endif
 }

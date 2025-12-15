@@ -7,7 +7,7 @@
     ;0 = JP
     ;1 = US
     ;2 = EU
-    !version = 0
+    !version = 1
 }
 
 { ;asar functions

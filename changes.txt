@@ -1,5 +1,10 @@
 changes:
 
+enable fastrom
+remove various unused data
+
+---
+
 bank01.asm
     .ACC4:
         always create a shield when starting a stage

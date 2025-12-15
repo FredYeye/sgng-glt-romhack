@@ -1,12 +1,4 @@
-org $008000
-
-{ ;8000 - 80FF
-if !version == 0
-    fillbyte $FF : fill 256
-elseif !version == 1 || !version == 2
-    incbin "fill_bytes/eng/bank00a.bin"
-endif
-}
+org $808000
 
 { ;8100 - 8107
 clear_snes_regs: ;a8 x8
@@ -43,6 +35,9 @@ entry: ;emulated mode (code entry)
     ldx #$15 : ldy #$05 : jsr clear_snes_regs
     ldx #$23 : ldy #$10 : jsr clear_snes_regs
     stz !MDMAEN
+
+    lda #$01 : sta $420D
+
     phb
     lda #$7E : pha : plb
     !X16
@@ -1094,14 +1089,6 @@ _008B05:
     dw $0000 : db $2A, $36, $01
     dw $0000 : db $38, $3C, $01
     dw $7FFF
-}
-
-{ ;8C90 - A2FF
-if !version == 0
-    fillbyte $FF : fill 5744
-elseif !version == 1 || !version == 2
-    incbin "fill_bytes/eng/bank00b.bin"
-endif
 }
 
 { ;A300 - A308
@@ -3277,10 +3264,6 @@ chest_offset: ;chest x,y spawn offsets from trigger
 
     ;18
     dw $0060, $0094 ;7-5
-}
-
-{ ;C3C1 - C3D8
-    fillbyte $00 : fill 24
 }
 
 { ;C3D9 - C758
@@ -5618,31 +5601,12 @@ _00EC3F:
     dw $0005, $0002, $0002 ;zoom speeds
 }
 
-{ ;EC4B - ECFF
-if !version == 0
-    fillbyte $FF : fill 181
-elseif !version == 1
-    incbin "fill_bytes/eng/bank00c.bin"
-elseif !version == 2
-    incbin "fill_bytes/eng/bank00c.bin":83..0
-endif
-}
-
 { ;ED00 - FF43
     incsrc "various/sprite_set_offsets.asm"
 }
 
-{ ;FF44 - FFBF
-if !version == 0
-    fillbyte $FF : fill 124
-elseif !version == 1
-    incbin "fill_bytes/eng/bank00d.bin"
-elseif !version == 2
-    incbin "fill_bytes/eng/bank00d.bin":8..0
-endif
-}
-
 { ;snes header
+org $80FFC0
 if !version == 0
     db "CHOHMAKAIMURA        " ;title
 elseif !version == 1 || !version == 2
