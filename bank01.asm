@@ -3031,17 +3031,17 @@ _0196EF: ;a8 x8
     pha
     txy
     !AX16
-    lda ($3D),Y ;3D = offset to random_values
+    lda ($3D),Y ;3D = offset to random_values_idx
     sta $0000
     tay
     !A8
     pla
-    cmp.w random_values,Y
+    cmp.w random_values_idx,Y
     bcc +
 
     sta !WRDIVL
     stz !WRDIVH
-    lda.w random_values,Y : sta !WRDIVB
+    lda.w random_values_idx,Y : sta !WRDIVB
     nop #8
     lda !RDMPYL
 +:
@@ -3050,7 +3050,7 @@ _0196EF: ;a8 x8
     and #$00FF
     adc $0000
     tax
-    lda.w random_values+1,X
+    lda.w random_values_idx+1,X
     !AX8
     pld
     tay
@@ -3200,7 +3200,7 @@ _0197D1: ;a8 x8
     txa
     ldy #$0040
     ldx #$001E
-    jsl _01C045_C055
+    jsl _01C045_far
     !AX8
     lda #$0C : sta $1A77
 .981F:
@@ -5731,8 +5731,8 @@ endif
     sta.w difficulty
     asl
     tax
-    lda.w _00DFE5+0,X : sta $003D
-    lda.w _00DFE5+1,X : sta $003E
+    lda.w random_values_difficulty_offset+0,X : sta $003D
+    lda.w random_values_difficulty_offset+1,X : sta $003E
     jsl _058000
     jsl _0180B9
     jsl _018CE2
@@ -7552,14 +7552,14 @@ _01BD1D: ;a- x-
     phy
     phx
     tyx
-    lda _03EF86,X
+    lda.l tower_tiles,X
     plx
     tay
     lda #$0010 : sta $0006
 .BD66:
     phx
     tyx
-    lda _03EF86,X
+    lda.l tower_tiles,X
     plx
     sta $7FE000,X
     lda #$0084 : sta $7FE020,X
@@ -7584,14 +7584,14 @@ _01BD1D: ;a- x-
     ldy $0008
     phx
     tyx
-    lda _03EF86+$1C,X
+    lda.l tower_tiles+$1C,X
     plx
     tay
     lda #$0010 : sta $000A
 .BDA1:
     phx
     tyx
-    lda _03EF86,X
+    lda.l tower_tiles,X
     plx
     sta $7FDE00,X
     inx #2
@@ -7873,19 +7873,19 @@ _01BF78: ;a- x8
     rts
 }
 
-{ ;C00B - C027
+{ ;C00B - C044
 _01C00B: ;a16 x-
     !X16
-    lda #$0000 : jsr _01C028
-    lda #$000A : jsr _01C028
-    lda #$0014 : jsr _01C028
-    lda #$001E : jsr _01C028
+    lda #$0000 : jsr .C028
+    lda #$000A : jsr .C028
+    lda #$0014 : jsr .C028
+    lda #$001E : jsr .C028
     !X8
     rts
-}
 
-{ ;C028 - C044
-_01C028: ;a16 x16
+;-----
+
+.C028:
     phx
     sta $0010
     clc
@@ -7914,7 +7914,7 @@ _01C045: ;a16 x16
     ply
     jmp _01C172
 
-.C055: ;a16 x16
+.far: ;a16 x16
     jsr _01C045
     rtl
 }
@@ -9641,7 +9641,7 @@ _01CCBD: ;a8 x8
 .CDEE:
     lda #$00
     jsr .CE9C
-    jsr _01D090_D263
+    jsr _01D263
     jsr _01D565
     jsr _01DE62_DE63
     lda #!down
@@ -9655,7 +9655,7 @@ _01CCBD: ;a8 x8
     jmp .CF8B
 
 .CE08:
-    lda #$00 : jsr _01D090_D1C5
+    lda #$00 : jsr _01D1C4_D1C5
     lda.w p1_button_hold+1
     bit #!right|!left
     beq .CE18
@@ -9706,7 +9706,7 @@ _01CCBD: ;a8 x8
     jmp .CF8B
 
 .CE54:
-    lda #$00 : jsr _01D090_D1C5
+    lda #$00 : jsr _01D1C4_D1C5
     jsr _01D565
     lda.w p1_button_hold+1
     bit #!right|!left
@@ -9823,7 +9823,7 @@ _01CCBD: ;a8 x8
 .arthur_jump:
     inc.w jump_counter
     lda #!sfx_jump : jsl _018049_8053
-    jsr _01D090_D2D4
+    jsr _01D263_D2D4
     lda.w _00BA26,X : sta $14B0
     ldy.w _00BA2A,X
     lda.w jump_state
@@ -9865,7 +9865,7 @@ _01CCBD: ;a8 x8
     lda.w double_jump_state
     bne +
 
-    jsr _01D090_D2D4
+    jsr _01D263_D2D4
 +:
     jsr _01DE62_DE63
     jsr arthur_cap_fall_speed
@@ -9908,7 +9908,7 @@ _01CCBD: ;a8 x8
     lda #$02 : sta $1D
     lda #$01 : ora $09 : sta $09
 .CF9D:
-    jsr _01D090_D263
+    jsr _01D263
     jsr _01D565
     lda #$00
     jsr .CE9C
@@ -9928,8 +9928,8 @@ _01CCBD: ;a8 x8
 
     jsr _01D957
 +:
-    jsr _01D090_D2D4
-    lda #$00 : jsr _01D090_D1C5
+    jsr _01D263_D2D4
+    lda #$00 : jsr _01D1C4_D1C5
     brk #$00
 
 ;---- CFC6
@@ -10041,11 +10041,11 @@ _01CFF3:
     dec.b obj.pos_y+1
     !A8
     ldy #$08
-    jsr _01D090_D2AB
+    jsr _01D263_D2AB
     bcc .D041
 
     jsl _01A4E2_A52B
-    jsr _01D090_D2C9
+    jsr _01D263_D2C9
     bcc .D041
 
     bra .D020
@@ -10059,11 +10059,11 @@ _01CFF3:
     inc.b obj.pos_y+1
     !A8
     ldy #$08
-    jsr _01D090_D2BD
+    jsr _01D263_D2BD
     bcc .D085
 
     ldy #$00
-    jsr _01D090_D2BD
+    jsr _01D263_D2BD
     bcc .D085
 
     jmp _01CCBD_CFC8
@@ -10076,7 +10076,7 @@ _01CFF3:
     jmp _01CCBD_CDC4
 }
 
-{ ;D090 - D564
+{ ;D090 - D1C3
 ;arthur thing code
 
 _01D090: ;a8 x8
@@ -10092,8 +10092,8 @@ _01D090: ;a8 x8
     lda.w armor_state : asl : tax
     jsr (.D114,X)
 .D0B1:
-    jsr .D2E2
-    jsr .D30F
+    jsr _01D263_D2E2
+    jsr _01D30F
     jsr .D143
     lda $0F
     bmi .D0C3
@@ -10115,7 +10115,7 @@ _01D090: ;a8 x8
     jsr set_arthur_palette ;unsure if this should be a local function or not
 .D0DC:
     jsl _018E32_8E73
-    jsr .D1E1
+    jsr _01D1E1
     lda $08
     and #$7F
     ldx $0276
@@ -10164,10 +10164,10 @@ _01D090: ;a8 x8
     lda.w is_shooting
     beq +
 
-    jsr .D2D4
+    jsr _01D263_D2D4
 +:
     jsl update_animation_normal
-    jsr .D3C4
+    jsr _01D371_D3C4
     rts
 
 ;-----
@@ -10253,28 +10253,28 @@ _01D090: ;a8 x8
     lda $14BE : sta.b obj.pos_x+1
 .D1C3:
     rts
+}
 
-;-----
-
-.D1C4:
+{ ;D1C4 - D1E0
+_01D1C4:
     rts
 
 .D1C5: ;a8 x-
     sta.w jump_type
     lda.w jump_press
-    beq .D1C4
+    beq _01D1C4
 
     pla : pla
-    brk #00
+    brk #$00
 
 ;----- D1D1
 
     ldx.w jump_type
     jmp (+,X) : +: dw _01CCBD_arthur_jump, arthur_baby_jump, arthur_seal_jump, arthur_bee_jump, arthur_maiden_jump
+}
 
-;-----
-
-.D1E1:
+{ ;D1E1 - D262
+_01D1E1:
     ;transformation
     lda $14D1 : ora $14F5
     bne .D208
@@ -10330,10 +10330,10 @@ _01D090: ;a8 x8
     lda #$01              : sta.w can_charge_magic
     stz $14B3
     rts
+}
 
-;-----
-
-.D263: ;a8 x? ;arthur code, called from arthur idle?
+{ ;D263 - D30E
+_01D263: ;a8 x? ;arthur code, called from arthur idle?
     lda $14C3
     bne .D2AA
 
@@ -10428,17 +10428,16 @@ _01D090: ;a8 x8
     jsl _02FDB3
     lda.b obj.direction : eor #$01 : sta.b obj.direction
     ldx.w stage
-    sec
-    lda.b obj.hp : sbc.w _00BA5E,X : sta.b obj.hp
+    sec : lda.b obj.hp : sbc.w _00BA5E,X : sta.b obj.hp
     bpl .D30E
 
     inc $14D1
 .D30E:
     rts
+}
 
-;-----
-
-.D30F:
+{ ;D30F - D370
+_01D30F:
     lda $14D1
     bne .D370
 
@@ -10487,10 +10486,10 @@ _01D090: ;a8 x8
     inc $14D1
 .D370:
     rts
+}
 
-;-----
-
-.D371:
+{ ;D371 - D564
+_01D371:
     asl
     tax
     jmp (+,X) : +: dw .D3B7, .D384, .D392, .D3B8, .D3C3, .D3BC, .D3D1
@@ -10551,7 +10550,7 @@ _01D090: ;a8 x8
     bne .D3C3
 
     lda.w double_jump_state
-    bne .D371
+    bne _01D371
 
 .D3D1:
     lda.w weapon_cooldown
@@ -10679,7 +10678,7 @@ _01D090: ;a8 x8
     lda $1F25 : sta $002B,X
     lda $0000 : sta.w obj.type,X
     jsr _01DD90
-    lda $12 : sta.w obj.direction,X : sta.w obj.facing,X
+    lda.b obj.facing : sta.w obj.direction,X : sta.w obj.facing,X
     lda $0001 : sta $0007,X
 .D50A:
     rts
@@ -10844,9 +10843,9 @@ _01D565: ;a8 x?
     jsr get_magic_slot
     bmi .D62C
 
-    lda #$80 : sta $0008,X
-    lda #$0C : sta.w obj.active,X
-    lda #$14 : sta.w obj.type,X
+    lda #$80      : sta $0008,X
+    lda #$0C      : sta.w obj.active,X
+    lda #!id_seek : sta.w obj.type,X
     !X8
     lda #$FF : sta $0F
     stz $14B1
@@ -11930,7 +11929,7 @@ _01DDFC:
 
 ;----- DE06
 
-    jsr _01D090_D2D4
+    jsr _01D263_D2D4
     bra .DE04
 }
 
@@ -12091,7 +12090,7 @@ arthur_baby: ;a8 x8
     lda.b obj.facing : sta.b obj.direction
 .DF41:
     lda #$02 : jsr _01CCBD_CE9C
-    lda #$02 : jsr _01D090_D1C5
+    lda #$02 : jsr _01D1C4_D1C5
     lda.w p1_button_hold+1
     bit #!right|!left
     bne .DF56
@@ -12113,7 +12112,7 @@ arthur_baby: ;a8 x8
 .DF66:
     jsr _01CCBD_CE85
     lda #$02 : jsr _01CCBD_CE9C
-    lda #$02 : jsr _01D090_D1C5
+    lda #$02 : jsr _01D1C4_D1C5
     lda.w p1_button_hold+1
     bit #!right|!left
     bne .DF7F
@@ -12138,7 +12137,7 @@ arthur_baby: ;a8 x8
     lda #$02 : sta $3C
     inc.w jump_counter
     lda #!sfx_jump : jsl _018049_8053
-    jsr _01D090_D2D4
+    jsr _01D263_D2D4
     ldy.w _00BA2A,X : jsl set_speed_xyg
     lda.b obj.facing : sta.b obj.direction
 .DFA1:
@@ -12146,7 +12145,7 @@ arthur_baby: ;a8 x8
 
 ;----- DFA3
 
-    jsr _01D090_D2D4
+    jsr _01D263_D2D4
     jsr arthur_cap_fall_speed
     jsr _01D8F1
     jsr _01D91C
@@ -12201,7 +12200,7 @@ arthur_maiden:
 ;----- DFFA
 
     lda #$08 : jsr _01CCBD_CE9C
-    lda #$08 : jsr _01D090_D1C5
+    lda #$08 : jsr _01D1C4_D1C5
     lda.w p1_button_hold+1
     bit #!right|!left
     bne .E01E
@@ -12228,7 +12227,7 @@ arthur_maiden:
 .E02C:
     jsr _01CCBD_CE85
     lda #$08 : jsr _01CCBD_CE9C
-    lda #$08 : jsr _01D090_D1C5
+    lda #$08 : jsr _01D1C4_D1C5
     lda.w p1_button_hold+1
     bit #!right|!left
     bne .E045
@@ -12254,7 +12253,7 @@ arthur_maiden:
     lda #$04 : sta $3C
     inc.w jump_counter
     lda #$2B : jsl _018049_8053
-    jsr _01D090_D2D4
+    jsr _01D263_D2D4
     lda.w _01BB0E_BB0E,X : sta $3C
     ldy.w _01BB0E_BB12,X : jsl set_speed_xyg
     lda.b obj.facing : sta.b obj.direction
@@ -12263,7 +12262,7 @@ arthur_maiden:
 
 ;----- E074
 
-    jsr _01D090_D2D4
+    jsr _01D263_D2D4
     jsr arthur_cap_fall_speed
     jsr _01D8F1
     jsr _01D91C
@@ -12311,7 +12310,7 @@ arthur_seal: ;a? x8
 ;----- E0BC
 
     lda #$04 : jsr _01CCBD_CE9C
-    lda #$04 : jsr _01D090_D1C5
+    lda #$04 : jsr _01D1C4_D1C5
     lda.w p1_button_hold+1
     bit #!right|!left
     beq .E0BA
@@ -12322,7 +12321,7 @@ arthur_seal: ;a? x8
 .E0DB:
     jsr _01CCBD_CE85
     lda #$04 : jsr _01CCBD_CE9C
-    lda #$04 : jsr _01D090_D1C5
+    lda #$04 : jsr _01D1C4_D1C5
     lda.w p1_button_hold+1
     bit #!right|!left
     bne .E0F4
@@ -12347,7 +12346,7 @@ arthur_seal: ;a? x8
     lda #$02 : sta $3C
     inc.w jump_counter
     lda #$2B : jsl _018049_8053
-    jsr _01D090_D2D4
+    jsr _01D263_D2D4
     ldy.w _01BB16,X : jsl set_speed_xyg
     lda.b obj.facing : sta.b obj.direction
     lda #$2B : jsl _018049_8053
@@ -12372,7 +12371,7 @@ arthur_seal: ;a? x8
     dec $2F
     bne .E136
 
-    jsr _01D090_D2D4
+    jsr _01D263_D2D4
     ldy.w _01BB16,X : jsl set_speed_xyg
     lda.b obj.facing : sta.b obj.direction
     lda #$02 : sta $3C
@@ -12387,7 +12386,7 @@ arthur_seal: ;a? x8
 ;-----
 
 .E155:
-    jsr _01D090_D2D4
+    jsr _01D263_D2D4
     jsr arthur_cap_fall_speed
     jsr _01D8F1
     jsr _01D91C
@@ -12442,7 +12441,7 @@ arthur_bee:
 ;----- E1A7
 
     lda #$06 : jsr _01CCBD_CE9C
-    lda #$06 : jsr _01D090_D1C5
+    lda #$06 : jsr _01D1C4_D1C5
     lda.w p1_button_hold+1
     bit #!right|!left
     beq .E1A5
@@ -12451,7 +12450,7 @@ arthur_bee:
     lda.b obj.facing : sta.b obj.direction
 .E1C2:
     jsr _01CCBD_CE85
-    lda #$06 : jsr _01D090_D1C5
+    lda #$06 : jsr _01D1C4_D1C5
     lda.w p1_button_hold+1
     bit #!right|!left
     bne .E1D6
@@ -12482,7 +12481,7 @@ arthur_bee:
 .jump:
     inc.w jump_counter
     lda #$2B : jsl _018049_8053
-    jsr _01D090_D2D4
+    jsr _01D263_D2D4
     ldy #$33 : jsl set_speed_xyg
     lda.b obj.facing : sta.b obj.direction
 .E205:
@@ -12490,7 +12489,7 @@ arthur_bee:
 
 ;----- E207
 
-    jsr _01D090_D2D4
+    jsr _01D263_D2D4
     jsr arthur_cap_fall_speed
     jsr _01D8F1
     jsr _01D91C
@@ -13157,7 +13156,7 @@ _01E6FD: ;a8 x8
     lda #!id_torch2_flame ;torch2
 .E745:
     ldy #$00
-    jsr _01D090_D4D8
+    jsr _01D371_D4D8
     bmi .E752
 
     jsl set_spawn_offset
@@ -13232,7 +13231,7 @@ _01E75E: ;a8 x8
     lda #!id_torch_flame
     ldy $07
     iny
-    jsr _01D090_D4D8
+    jsr _01D371_D4D8
     bmi .E7D3
 
     jsl set_spawn_offset
@@ -13346,7 +13345,7 @@ _01E836:
     lda #$2B
     ldy $07
     iny
-    jsr _01D090_D4D8
+    jsr _01D371_D4D8
     bmi .E8AB
 
     jsl set_spawn_offset
