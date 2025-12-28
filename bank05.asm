@@ -2387,11 +2387,3 @@ _058276: ;offsets to compose meta sprite from sprites, x/y pairs
     db $09, $03, $09, $04, $09, $05, $09, $06, $09, $07, $09, $08, $09, $09, $09, $81
     db $00, $00, $00, $00
 }
-
-{ ;FAFE - FFFF
-if !version == 0
-    fillbyte $FF : fill 1282
-elseif !version == 1 || !version == 2
-    incbin "fill_bytes/eng/bank05b.bin"
-endif
-}
