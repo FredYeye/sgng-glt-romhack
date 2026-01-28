@@ -1159,9 +1159,9 @@ update_pos_x: ;a8 x-
     bne .88FD
 
 .88E9:
-    clc
+    rep #$21 ;A16 + clc
     lda.b obj.pos_x+0 : adc.b obj.speed_x+0 : sta.b obj.pos_x+0
-    lda.b obj.pos_x+1 : adc.b obj.speed_x+1 : sta.b obj.pos_x+1
+    !A8
     lda.b obj.pos_x+2 : adc.b obj.speed_x+2 : sta.b obj.pos_x+2
     rts
 
