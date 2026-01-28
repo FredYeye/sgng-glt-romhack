@@ -561,13 +561,10 @@ _0183D4: ;a8 x16
 { ;8422 - 8450
 call_rng: ;a8 x-
     ;16-bit MCG, state *= 259
-    lda.w rng_state
-    pha
-    sta $0000
-    lda.w rng_state+1 : sta $0001
-    asl $0000 : rol $0001
-    clc : lda $0000         : adc.w rng_state : sta.w rng_state
-          lda.w rng_state+1 : adc $0001       : sta.w rng_state+1
+    lda.w rng_state : pha
+    !A16
+    lda.w rng_state : asl : clc : adc.w rng_state : sta.w rng_state
+    !A8
     pla : clc : adc.w rng_state+1 : sta.w rng_state+1
     rtl
 }
